@@ -231,6 +231,14 @@ AC_ARG_ENABLE(module_bppp,
     [],
     [SECP_SET_DEFAULT([enable_module_bppp], [no], [yes])])
 
+AC_ARG_ENABLE(module_bulletproof,
+    AS_HELP_STRING([--enable-module-bulletproof],[enable classical Bulletproofs module [default=no]]),
+    [],
+    [dnl Vendored module: off in both regular and dev_mode builds. The libsecp
+     dnl test runner is not wired up against this module's tests_impl.h, so
+     dnl dev_mode would not exercise anything new.
+     SECP_SET_DEFAULT([enable_module_bulletproof], [no], [no])])
+
 AC_ARG_ENABLE(module_ecdsa-adaptor,
     AS_HELP_STRING([--enable-module-ecdsa-adaptor],[enable ECDSA adaptor module [default=no]]),
     [],
@@ -462,6 +470,18 @@ if test x"$enable_module_bppp" = x"yes"; then
   enable_module_generator=yes
 fi
 
+if test x"$enable_module_bulletproof" = x"yes"; then
+  if test x"$enable_module_generator" = x"no"; then
+    AC_MSG_ERROR([Module dependency error: You have disabled the generator module explicitly, but it is required by the bulletproof module.])
+  fi
+  if test x"$enable_module_rangeproof" = x"no"; then
+    AC_MSG_ERROR([Module dependency error: You have disabled the rangeproof module explicitly, but it is required by the bulletproof module.])
+  fi
+  SECP_CONFIG_DEFINES="$SECP_CONFIG_DEFINES -DENABLE_MODULE_BULLETPROOF=1"
+  enable_module_generator=yes
+  enable_module_rangeproof=yes
+fi
+
 if test x"$enable_module_ecdsa_s2c" = x"yes"; then
   SECP_CONFIG_DEFINES="$SECP_CONFIG_DEFINES -DENABLE_MODULE_ECDSA_S2C=1"
 fi
@@ -610,6 +630,7 @@ AM_CONDITIONAL([ENABLE_MODULE_MUSIG], [test x"$enable_module_musig" = x"yes"])
 AM_CONDITIONAL([ENABLE_MODULE_ECDSA_S2C], [test x"$enable_module_ecdsa_s2c" = x"yes"])
 AM_CONDITIONAL([ENABLE_MODULE_ECDSA_ADAPTOR], [test x"$enable_module_ecdsa_adaptor" = x"yes"])
 AM_CONDITIONAL([ENABLE_MODULE_BPPP], [test x"$enable_module_bppp" = x"yes"])
+AM_CONDITIONAL([ENABLE_MODULE_BULLETPROOF], [test x"$enable_module_bulletproof" = x"yes"])
 AM_CONDITIONAL([ENABLE_MODULE_SCHNORRSIG_HALFAGG], [test x"$enable_module_schnorrsig_halfagg" = x"yes"])
 AM_CONDITIONAL([USE_REDUCED_SURJECTION_PROOF_SIZE], [test x"$use_reduced_surjection_proof_size" = x"yes"])
 AM_CONDITIONAL([USE_EXTERNAL_ASM], [test x"$enable_external_asm" = x"yes"])
@@ -650,6 +671,7 @@ echo "  module musig            = $enable_module_musig"
 echo "  module ecdsa-s2c        = $enable_module_ecdsa_s2c"
 echo "  module ecdsa-adaptor    = $enable_module_ecdsa_adaptor"
 echo "  module bppp             = $enable_module_bppp"
+echo "  module bulletproof      = $enable_module_bulletproof"
 echo "  module schnorrsig-halfagg = $enable_module_schnorrsig_halfagg"
 echo
 echo "  asm                       = $set_asm"

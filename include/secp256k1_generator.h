@@ -26,6 +26,9 @@ typedef struct {
  */
 SECP256K1_API const secp256k1_generator *secp256k1_generator_h;
 
+/** Standard secp256k1 base point G, in secp256k1_generator form. */
+SECP256K1_API const secp256k1_generator *secp256k1_generator_g;
+
 /** Parse a 33-byte generator byte sequence into a generator object.
  *
  *  Returns: 1 if input contains a valid generator.

@@ -7502,6 +7502,10 @@ static void run_ecdsa_wycheproof(void) {
 # include "modules/ecdsa_adaptor/tests_impl.h"
 #endif
 
+#ifdef ENABLE_MODULE_BULLETPROOF
+# include "modules/bulletproofs/tests_impl.h"
+#endif
+
 static void run_secp256k1_memczero_test(void) {
     unsigned char buf1[6] = {1, 2, 3, 4, 5, 6};
     unsigned char buf2[sizeof(buf1)];
@@ -7860,6 +7864,10 @@ int main(int argc, char **argv) {
 
 #ifdef ENABLE_MODULE_RANGEPROOF
     run_rangeproof_tests();
+#endif
+
+#ifdef ENABLE_MODULE_BULLETPROOF
+    run_bulletproofs_tests();
 #endif
 
 #ifdef ENABLE_MODULE_WHITELIST

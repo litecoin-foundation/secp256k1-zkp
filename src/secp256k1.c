@@ -50,6 +50,10 @@
 # include "../include/secp256k1_rangeproof.h"
 #endif
 
+#ifdef ENABLE_MODULE_BULLETPROOF
+# include "../include/secp256k1_bulletproofs.h"
+#endif
+
 #ifdef ENABLE_MODULE_ECDSA_S2C
 # include "../include/secp256k1_ecdsa_s2c.h"
 static void secp256k1_ecdsa_s2c_opening_save(secp256k1_ecdsa_s2c_opening* opening, secp256k1_ge* ge);
@@ -899,6 +903,10 @@ static int secp256k1_ge_parse_ext(secp256k1_ge* ge, const unsigned char *in33) {
 
 #ifdef ENABLE_MODULE_RANGEPROOF
 # include "modules/rangeproof/main_impl.h"
+#endif
+
+#ifdef ENABLE_MODULE_BULLETPROOF
+# include "modules/bulletproofs/main_impl.h"
 #endif
 
 #ifdef ENABLE_MODULE_WHITELIST
